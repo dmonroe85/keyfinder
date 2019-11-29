@@ -9,15 +9,18 @@ trait KeyAnalyzer {
 
   def contains(entry: String): Boolean
   def put(entry: String): Unit
+  def additionalStats(): Map[String, Any] = Map.empty
 
   var checked: Long = 0
   var present: Long = 0
 
-  def checkAndAdd(data: Vector[Int]): Unit = {
+  def createStringEntry(data: Vector[String]): String =
+    fieldIndices.map(i => data(i)).mkString(delimiter)
+
+  def checkAndAdd(data: Vector[String]): Unit = {
     checked += 1
 
-    val entry = fieldIndices.map(i => data(i)).mkString(delimiter)
-
+    val entry = createStringEntry(data)
     if (contains(entry))
       present += 1
 

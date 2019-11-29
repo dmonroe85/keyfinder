@@ -1,42 +1,29 @@
 package keyfinder
 
-import keyfinder.analyzer.BloomFilterAnalyzer
+import keyfinder.analyzer.{BloomFilterAnalyzer, KeyAnalyzer}
 
-final case class KeyFinder(candidateIndices: List[Int],
+final case class KeyFinder(candidateIndices: Set[Int],
                            maxColumns: Int,
-                           analyzerFunction: Int => ,
-                insertionCapacity: Int,
-                targetFalsePositiveRate: Double,
-                charset: String = "UTF-8") {
+                           subsetAnalyzerFunction: List[Int] => KeyAnalyzer) {
 
-  val analyzers: List[BloomFilterAnalyzer] =
-    KeyFinder.buildColumnSubsets(candidateIndices.toSet, maxColumns)
-      .map(indices =>
-        BloomFilterAnalyzer(
-          indices,
-          insertionCapacity,
-          targetFalsePositiveRate,
-          charset
-        )
-      )
+  val analyzers: List[KeyAnalyzer] =
+    KeyFinder.buildColumnSubsets(candidateIndices, maxColumns)
+      .map(subsetAnalyzerFunction)
 
-  def checkRow(row: List[String]): Unit = {
+  def analyzeRow(row: Vector[String]): Unit =
     analyzers.foreach(a => a.checkAndAdd(row))
-  }
 
-  def getStats(): List[Stats] = {
+  def getStats(): List[Stats] =
     analyzers.map( analyzer => analyzer.stats() )
-  }
 
 }
 
 object KeyFinder {
-  def buildColumnSubsets(set: Set[Int], maxSize: Int): List[List[Int]] = {
+  def buildColumnSubsets(set: Set[Int], maxSize: Int): List[List[Int]] =
     (1 to maxSize).flatMap(size => {
       set
         .subsets(size)
         .map(_.toList.sorted)
         .toList
     }).toList
-  }
 }
