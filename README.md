@@ -8,6 +8,33 @@ come in many forms (SQL rows, json messages, CSV lines, etc).
 
 `sbt clean test`
 
+##### Getting Started
+```scala
+import keyfinder.KeyFinder
+import keyfinder.analyzer.SetAnalyzer
+
+val rowIterator: Iterator[Vector[_]] = ??? // Implement your own stream here
+
+// Build the keyfinder
+val keyFinder = 
+  KeyFinder(
+    keyColumnCandidates = Set(1, 3, 4, 7),
+    maxKeySetSize = 3,
+    (fieldIndices: List[Int]) => SetAnalyzer(fieldIndices)
+  )
+
+// Analyze the stream 
+rowIterator.foreach(row => keyFinder.analyzeRow(row.map(_.mkString)) )
+
+// Get the top 10 results
+println(keyFinder.getStats().sortBy(_.presentRate).take(10))
+````
+
+### `KeyFinder`
+
+This class produces all of the possible candidate column subsets for analysis, builds analyzers for
+each candidate subset, and performs the analysis.
+
 ### `KeyAnalyzer`
 
 This trait provides interfaces and basic functionality that allow analyzing a stream of rows.
@@ -24,8 +51,3 @@ Included implementations:
 * `BloomFilterAnalyzer`
     * Stores previously seen row information in a bloom filter.
     * This is an inexact, probabilistic approach, but it is memory-efficient and can scale very well.
-
-### `KeyFinder`
-
-This class produces all of the possible candidate column subsets for analysis, builds analyzers for
-each candidate subset, and performs the analysis.

@@ -2,12 +2,12 @@ package keyfinder
 
 import keyfinder.analyzer.{BloomFilterAnalyzer, KeyAnalyzer}
 
-final case class KeyFinder(candidateIndices: Set[Int],
-                           maxColumns: Int,
+final case class KeyFinder(keyColumnCandidates: Set[Int],
+                           maxKeySetSize: Int,
                            subsetAnalyzerFunction: List[Int] => KeyAnalyzer) {
 
   val analyzers: List[KeyAnalyzer] =
-    KeyFinder.buildColumnSubsets(candidateIndices, maxColumns)
+    KeyFinder.buildColumnSubsets(keyColumnCandidates, maxKeySetSize)
       .map(subsetAnalyzerFunction)
 
   def analyzeRow(row: Vector[String]): Unit =
