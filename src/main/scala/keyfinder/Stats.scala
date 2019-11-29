@@ -1,6 +1,6 @@
 package keyfinder
 
 final case class Stats(fieldIndices: List[Int],
-                       present: Long,
+                       alreadyPresent: Long,
                        checked: Long,
-                       presentRate: Double)
+                       duplicationRate: Double)

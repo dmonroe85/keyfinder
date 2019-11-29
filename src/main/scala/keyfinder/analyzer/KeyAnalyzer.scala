@@ -12,7 +12,7 @@ trait KeyAnalyzer {
   def additionalStats(): Map[String, Any] = Map.empty
 
   var checked: Long = 0
-  var present: Long = 0
+  var alreadyPresent: Long = 0
 
   def createStringEntry(data: Vector[String]): String =
     fieldIndices.map(i => data(i)).mkString(delimiter)
@@ -22,7 +22,7 @@ trait KeyAnalyzer {
 
     val entry = createStringEntry(data)
     if (contains(entry))
-      present += 1
+      alreadyPresent += 1
 
     put(entry)
   }
@@ -30,9 +30,9 @@ trait KeyAnalyzer {
   def stats(): Stats =
     Stats(
       fieldIndices,
-      present,
+      alreadyPresent,
       checked,
-      present.toDouble / checked.toDouble
+      alreadyPresent.toDouble / checked.toDouble
     )
 
 }

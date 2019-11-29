@@ -30,7 +30,7 @@ class KeyFinderTest extends FreeSpec with Matchers {
       val keyFinderSet = KeyFinder(keyColumnCandidates, maxKeySetSize, (fieldIndices: List[Int]) => SetAnalyzer(fieldIndices))
 
       (0 until numberOfRows).foreach(i => keyFinderSet.analyzeRow(getRow()) )
-      keyFinderSet.getStats().minBy(_.presentRate).fieldIndices shouldBe List(1, 3)
+      keyFinderSet.getStats().minBy(_.duplicationRate).fieldIndices shouldBe List(1, 3)
     }
   }
 

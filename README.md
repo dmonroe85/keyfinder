@@ -27,7 +27,7 @@ val keyFinder =
 rowIterator.foreach(row => keyFinder.analyzeRow(row.map(_.mkString)) )
 
 // Get the top 10 results
-println(keyFinder.getStats().sortBy(_.presentRate).take(10))
+println(keyFinder.getStats().sortBy(_.duplicationRate).take(10))
 ````
 
 ### `KeyFinder`
@@ -50,4 +50,4 @@ Included implementations:
     * This is good for exactly finding a unique primary key.
 * `BloomFilterAnalyzer`
     * Stores previously seen row information in a bloom filter.
-    * This is an inexact, probabilistic approach, but it is memory-efficient and can scale very well.
+    * This is an inexact approach, but it is memory-efficient and can scale very well.
